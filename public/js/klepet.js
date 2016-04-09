@@ -43,6 +43,24 @@ Klepet.prototype.procesirajUkaz = function(ukaz) {
         sporocilo = 'Neznan ukaz';
       }
       break;
+    case 'dregljaj':
+      besede.shift();
+      var besedilo = besede.join(' ');
+      var parametri = besedilo.split('\"');
+      if (parametri) {
+        var vzdevek = parametri[1];
+        this.socket.emit('sporocilo', { vzdevek: parametri[1] });
+        this.socket.emit('kanal', { kanal: parametri[1] });
+        $('#kanal').text(vzdevek + " @ " + "dregljaj");
+        sporocilo = 'Dregljaj za ' + parametri[1];
+        $('#vsebina').jrumble();
+        trigger('startRumble');
+        setTimeout(startRumble, 1500);
+        trigger('stopRumble');
+      } else {
+        sporocilo = 'Neznan ukaz';
+      }
+      break;
     default:
       sporocilo = 'Neznan ukaz.';
       break;
