@@ -28,17 +28,44 @@ function procesirajVnosUporabnika(klepetApp, socket) {
     $('#sporocila').append(divElementEnostavniTekst(sporocilo));
     $('#sporocila').scrollTop($('#sporocila').prop('scrollHeight'));
   }
-
+  
+  dodajSlike(slike(sporocilo));
   $('#poslji-sporocilo').val('');
 }
 
 var socket = io.connect();
-var trenutniVzdevek = "", trenutniKanal = "";
+var trenutniVzdevek = "";
+var trenutniKanal = "";
 
 var vulgarneBesede = [];
 $.get('/swearWords.txt', function(podatki) {
   vulgarneBesede = podatki.split('\r\n');
 });
+
+function slike(vhod) {
+  var slika = vhod.match(/(http:\/\/|https:\/\/)\S+(.gif|.png|.jpg)/gi);
+ 
+  if (slika == null) {
+    return [];
+  }
+  else {
+    return slika;
+  }
+}
+
+function dodajSlike(slike) {
+  if (slike == null)
+    return;
+    
+  for (var i = 0; i < slike.length; i++)
+    if (slike[i].indexOf(("http://sandbox.lavbic.net/teaching/OIS/gradivo/") != 0) &&
+        slike[i].indexOf(("http://sandbox.lavbic.net/teaching/OIS/gradivo/") != 1) &&
+        slike[i].indexOf(("http://sandbox.lavbic.net/teaching/OIS/gradivo/") != 2) &&
+        slike[i].indexOf(("http://sandbox.lavbic.net/teaching/OIS/gradivo/") != 3) &&
+        slike[i].indexOf(("http://sandbox.lavbic.net/teaching/OIS/gradivo/") != 4)) {
+       $('#sporocila').append('<a href="'+slike[i]+'"> <img style="margin-left: 20px; width: 200px;" src="'+slike[i]+'" /></a>');
+    }
+}
 
 function filtirirajVulgarneBesede(vhod) {
   for (var i in vulgarneBesede) {
@@ -76,6 +103,7 @@ $(document).ready(function() {
   socket.on('sporocilo', function (sporocilo) {
     var novElement = divElementEnostavniTekst(sporocilo.besedilo);
     $('#sporocila').append(novElement);
+    dodajSlike(slike(sporocilo.besedilo));
   });
   
   socket.on('kanali', function(kanali) {
@@ -112,7 +140,6 @@ $(document).ready(function() {
     procesirajVnosUporabnika(klepetApp, socket);
     return false;
   });
-  
   
 });
 
