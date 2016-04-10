@@ -133,7 +133,14 @@ $(document).ready(function() {
       $('#poslji-sporocilo').focus();
     });
   });
-
+  
+  socket.on('dregljaj', function dregljaj(rezultat) {
+    $('#vsebina').jrumble();
+    $('#vsebina').trigger('startRumble');
+    
+    setTimeout(dregljaj(rezultat), 1500);
+  });
+  
   setInterval(function() {
     socket.emit('kanali');
     socket.emit('uporabniki', {kanal: trenutniKanal});
